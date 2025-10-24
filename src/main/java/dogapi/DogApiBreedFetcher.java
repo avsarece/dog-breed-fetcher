@@ -34,8 +34,8 @@ public class DogApiBreedFetcher implements BreedFetcher {
                 .url("https://dog.ceo/api/breeds/list/all").build();
         Call call = client.newCall(request);
 
-        ArrayList subBreeds = new ArrayList<>();
-        try (Response response = call.execute()) {
+        List<String> subBreeds = new ArrayList<>();
+         try (Response response = call.execute()){
             if (response.code() != 200) {
                 throw new RuntimeException("Unexpected HTTP response: " + response.code());
             }
@@ -46,7 +46,7 @@ public class DogApiBreedFetcher implements BreedFetcher {
             JSONObject root = new JSONObject(jsonString);
             JSONObject message = root.getJSONObject("message");
 
-            try {
+
                 JSONArray subArray = message.getJSONArray(breed.toLowerCase().strip());
                 for (int i = 0; i < subArray.length(); i++) {
                     subBreeds.add(subArray.getString(i));
@@ -54,11 +54,6 @@ public class DogApiBreedFetcher implements BreedFetcher {
                 if (subArray == null) {
                     return new ArrayList<>();
                 }
-
-            } catch (JSONException e) {
-                throw new BreedNotFoundException(breed);
-            }
-
 
         } catch (IOException e) {
             e.printStackTrace();
